@@ -1,6 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.SqlServer;
 
+using HrManagementSystem.Models;
+
 namespace HrMangementSystem.Models
 {
     public class AppDbContext : DbContext
@@ -17,13 +19,28 @@ namespace HrMangementSystem.Models
         public DbSet<Staff> Staff { get; set; }
         public DbSet<PerformanceProgress> PerformanceProgresses { get; set; }
         public DbSet<Objective> Objectives { get; set; }
+        public DbSet<Absence>Absences { get; set; } 
+        public DbSet<Attendance> Attendances { get; set; }
+        public DbSet<Document> Documents { get; set; }
+        public DbSet<InterviewScheduling> InterviewsScheduling { get; set; }
+        public DbSet<JobApplication> JobApplications { get; set; }
+        public DbSet<JobOffer> JobOffers { get; set; }
+        public DbSet<KeyResult> KeyResult { get; set; }
+        public DbSet<Leave>leaves { get; set; }
+
+        public DbSet<PerformanceReview> performanceReviews { get; set; }
+
+        
+
+
+
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             // تأكد من أنك قد قمت بإعداد الاتصال بشكل صحيح
             if (!optionsBuilder.IsConfigured)
             {
-                optionsBuilder.UseSqlServer("Data Source=SHEKO;Initial Catalog=project28;Integrated Security=True;Encrypt=False", options =>
+                optionsBuilder.UseSqlServer("Data Source=DESKTOP-558N4RO;Initial Catalog=HR Mangement System;Integrated Security=True;Encrypt=False;Trust Server Certificate=True", options =>
                 {
                     options.CommandTimeout(400); // ضبط المهلة لـ 3 دقائق
                 });
@@ -40,9 +57,9 @@ namespace HrMangementSystem.Models
 
             // إعداد العلاقات بين الموظفين والأقسام
             modelBuilder.Entity<Employee>()
-                .HasOne(e => e.Department)
-                .WithMany(d => d.Employees)
-                .HasForeignKey(e => e.DepartmentId)
+                .HasMany(e => e.Attendances)
+                .WithOne(a => a.Employee)
+                .HasForeignKey(a => a.EmployeeID)
                 .OnDelete(DeleteBehavior.Cascade);
 
             // إضافة بيانات افتراضية للمديرين
@@ -90,6 +107,19 @@ namespace HrMangementSystem.Models
                 .WithMany(o => o.PerformanceProgresses)
                 .HasForeignKey(pp => pp.ObjectiveID)
                 .OnDelete(DeleteBehavior.Restrict); // منع الحذف المتسلسل
+
+            // Define the relationship for PerformanceReview
+            modelBuilder.Entity<PerformanceReview>()
+                .HasOne(pr => pr.Employee)
+                .WithMany(e => e.PerformanceReviews)
+                .HasForeignKey(pr => pr.EmployeeID)
+                .OnDelete(DeleteBehavior.Cascade); // This allows cascading delete for EmployeeID
+
+            modelBuilder.Entity<PerformanceReview>()
+                .HasOne(pr => pr.Reviewer)
+                .WithMany(m => m.PerformanceReviews)
+                .HasForeignKey(pr => pr.ReviewerID)
+                .OnDelete(DeleteBehavior.Restrict); // Prevent cascading delete for ReviewerID
         }
     }
 }

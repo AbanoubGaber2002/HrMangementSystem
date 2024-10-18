@@ -1,0 +1,247 @@
+﻿using HrManagementSystem.Models;
+using HrMangementSystem.Models;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.EntityFrameworkCore;
+using System;
+using System.Linq;
+using System.Threading.Tasks;
+
+namespace HrMangementSystem.Controllers
+{
+    public class AttendanceController : Controller
+    {
+        private readonly AppDbContext _context;
+
+        public AttendanceController(AppDbContext context)
+        {
+            _context = context;
+        }
+
+        // GET: Attendance
+        public async Task<IActionResult> Index()
+        {
+            var attendances = await _context.Attendances
+                .Include(a => a.Employee)
+                .OrderByDescending(a => a.Date)
+                .ToListAsync();
+            return View(attendances);
+        }
+
+        // GET: Attendance/Create
+        public IActionResult Create()
+        {
+            PrepareEmployeesList();
+            var attendance = new Attendance
+            {
+                Date = DateTime.Today,
+                CheckInTime = DateTime.Now,
+                CheckOutTime = DateTime.Now // Don't set a default checkout time
+            };
+
+            return View(attendance);
+        }
+
+        // POST: Attendance/Create
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Create([Bind("EmployeeID,CheckInTime,CheckOutTime,Date")] Attendance attendance)
+        {
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    // Validate check-in and check-out times
+                    if (attendance.CheckOutTime <= attendance.CheckInTime)
+                    {
+                        ModelState.AddModelError("CheckOutTime", "Check-out time must be after check-in time");
+                        PrepareEmployeesList();
+                        return View(attendance);
+                    }
+
+                    // Validate date is not in the future
+                    if (attendance.Date.Date > DateTime.Today)
+                    {
+                        ModelState.AddModelError("Date", "Attendance date cannot be in the future");
+                        PrepareEmployeesList();
+                        return View(attendance);
+                    }
+
+                    // Check for existing attendance
+                    var existingAttendance = await _context.Attendances
+                        .AsNoTracking()
+                        .FirstOrDefaultAsync(a => a.EmployeeID == attendance.EmployeeID
+                                             && a.Date.Date == attendance.Date.Date);
+
+                    if (existingAttendance != null)
+                    {
+                        ModelState.AddModelError(string.Empty, "Attendance record already exists for this employee on this date");
+                        PrepareEmployeesList();
+                        return View(attendance);
+                    }
+
+                    _context.Add(attendance);
+                    await _context.SaveChangesAsync();
+                    TempData["SuccessMessage"] = "Attendance record created successfully.";
+                    return RedirectToAction(nameof(Index));
+                }
+                catch (Exception ex)
+                {
+                    // Log the exception here
+                    ModelState.AddModelError(string.Empty, "An error occurred while saving the attendance record.");
+                }
+            }
+
+            PrepareEmployeesList();
+            return View(attendance);
+        }
+
+        // GET: Attendance/Edit/5
+        public async Task<IActionResult> Edit(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var attendance = await _context.Attendances
+                .Include(a => a.Employee)
+                .FirstOrDefaultAsync(m => m.AttendanceID == id);
+
+            if (attendance == null)
+            {
+                return NotFound();
+            }
+
+            PrepareEmployeesList();
+            return View(attendance);
+        }
+
+        // POST: Attendance/Edit/5
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Edit(int id, [Bind("AttendanceID,EmployeeID,CheckInTime,CheckOutTime,Date")] Attendance attendance)
+        {
+            if (id != attendance.AttendanceID)
+            {
+                return NotFound();
+            }
+
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    // Validate check-in and check-out times
+                    if (attendance.CheckOutTime <= attendance.CheckInTime)
+                    {
+                        ModelState.AddModelError("CheckOutTime", "Check-out time must be after check-in time");
+                        PrepareEmployeesList();
+                        return View(attendance);
+                    }
+
+                    // Validate date is not in the future
+                    if (attendance.Date.Date > DateTime.Today)
+                    {
+                        ModelState.AddModelError("Date", "Attendance date cannot be in the future");
+                        PrepareEmployeesList();
+                        return View(attendance);
+                    }
+
+                    // Check for existing attendance (excluding current record)
+                    var existingAttendance = await _context.Attendances
+                        .AsNoTracking()
+                        .FirstOrDefaultAsync(a => a.EmployeeID == attendance.EmployeeID
+                                             && a.Date.Date == attendance.Date.Date
+                                             && a.AttendanceID != attendance.AttendanceID);
+
+                    if (existingAttendance != null)
+                    {
+                        ModelState.AddModelError(string.Empty, "Another attendance record already exists for this employee on this date");
+                        PrepareEmployeesList();
+                        return View(attendance);
+                    }
+
+                    _context.Update(attendance);
+                    await _context.SaveChangesAsync();
+                    TempData["SuccessMessage"] = "Attendance record updated successfully.";
+                    return RedirectToAction(nameof(Index));
+                }
+                catch (DbUpdateConcurrencyException)
+                {
+                    if (!AttendanceExists(attendance.AttendanceID))
+                    {
+                        return NotFound();
+                    }
+                    throw;
+                }
+                catch (Exception ex)
+                {
+                    // Log the exception here
+                    ModelState.AddModelError(string.Empty, "An error occurred while updating the attendance record.");
+                }
+            }
+
+            PrepareEmployeesList();
+            return View(attendance);
+        }
+
+        // GET: Attendance/Delete/5
+        public async Task<IActionResult> Delete(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var attendance = await _context.Attendances
+                .Include(a => a.Employee)
+                .FirstOrDefaultAsync(m => m.AttendanceID == id);
+
+            if (attendance == null)
+            {
+                return NotFound();
+            }
+
+            return View(attendance);
+        }
+
+        // POST: Attendance/Delete/5
+        [HttpPost, ActionName("Delete")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteConfirmed(int id)
+        {
+            var attendance = await _context.Attendances.FindAsync(id);
+            if (attendance != null)
+            {
+                try
+                {
+                    _context.Attendances.Remove(attendance);
+                    await _context.SaveChangesAsync();
+                    TempData["SuccessMessage"] = "Attendance record deleted successfully.";
+                }
+                catch (Exception ex)
+                {
+                    // Log the exception here
+                    TempData["ErrorMessage"] = "An error occurred while deleting the attendance record.";
+                }
+            }
+            return RedirectToAction(nameof(Index));
+        }
+
+        private void PrepareEmployeesList()
+        {
+            ViewBag.Employees = new SelectList(_context.Employees
+                .OrderBy(e => e.FirstName)
+                .Select(e => new
+                {
+                    e.EmployeeId,
+                    FullName = $"{e.FirstName} {e.LastName}"
+                }), "EmployeeId", "FullName");
+        }
+
+        private bool AttendanceExists(int id)
+        {
+            return _context.Attendances.Any(e => e.AttendanceID == id);
+        }
+    }
+}

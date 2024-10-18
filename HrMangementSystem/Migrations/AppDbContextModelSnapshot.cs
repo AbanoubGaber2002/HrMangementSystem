@@ -22,7 +22,173 @@ namespace HrMangementSystem.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("Employee", b =>
+            modelBuilder.Entity("HrManagementSystem.Models.Attendance", b =>
+                {
+                    b.Property<int>("AttendanceID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("AttendanceID"));
+
+                    b.Property<DateTime>("CheckInTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("CheckOutTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("Date")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("EmployeeID")
+                        .HasColumnType("int");
+
+                    b.HasKey("AttendanceID");
+
+                    b.HasIndex("EmployeeID");
+
+                    b.ToTable("Attendances");
+                });
+
+            modelBuilder.Entity("HrMangementSystem.Models.Absence", b =>
+                {
+                    b.Property<int>("AbsenceID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("AbsenceID"));
+
+                    b.Property<int>("EmployeeID")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("EndDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Reason")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("StartDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("AbsenceID");
+
+                    b.HasIndex("EmployeeID");
+
+                    b.ToTable("Absences");
+                });
+
+            modelBuilder.Entity("HrMangementSystem.Models.Department", b =>
+                {
+                    b.Property<int>("DepartmentId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("DepartmentId"));
+
+                    b.Property<string>("DepartmentName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Location")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("ManagerId")
+                        .HasColumnType("int");
+
+                    b.HasKey("DepartmentId");
+
+                    b.HasIndex("ManagerId")
+                        .IsUnique();
+
+                    b.ToTable("Departments");
+
+                    b.HasData(
+                        new
+                        {
+                            DepartmentId = 1,
+                            DepartmentName = "Human Resources",
+                            Location = "Building A",
+                            ManagerId = 1
+                        },
+                        new
+                        {
+                            DepartmentId = 2,
+                            DepartmentName = "IT",
+                            Location = "Building B",
+                            ManagerId = 2
+                        },
+                        new
+                        {
+                            DepartmentId = 3,
+                            DepartmentName = "Marketing",
+                            Location = "Building C",
+                            ManagerId = 3
+                        },
+                        new
+                        {
+                            DepartmentId = 4,
+                            DepartmentName = "Sales",
+                            Location = "Building D",
+                            ManagerId = 4
+                        },
+                        new
+                        {
+                            DepartmentId = 5,
+                            DepartmentName = "Finance",
+                            Location = "Building E",
+                            ManagerId = 5
+                        });
+                });
+
+            modelBuilder.Entity("HrMangementSystem.Models.Document", b =>
+                {
+                    b.Property<int>("DocumentID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("DocumentID"));
+
+                    b.Property<int>("ApplicantID")
+                        .HasColumnType("int");
+
+                    b.Property<byte[]>("CVFile")
+                        .IsRequired()
+                        .HasColumnType("varbinary(max)");
+
+                    b.Property<string>("ContentType")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("DocumentType")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("FileName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("FileSize")
+                        .HasColumnType("int");
+
+                    b.Property<int>("JobApplicationApplicationID")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("UploadDate")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("DocumentID");
+
+                    b.HasIndex("JobApplicationApplicationID");
+
+                    b.ToTable("Documents");
+                });
+
+            modelBuilder.Entity("HrMangementSystem.Models.Employee", b =>
                 {
                     b.Property<int>("EmployeeId")
                         .ValueGeneratedOnAdd()
@@ -161,68 +327,180 @@ namespace HrMangementSystem.Migrations
                         });
                 });
 
-            modelBuilder.Entity("HrMangementSystem.Models.Department", b =>
+            modelBuilder.Entity("HrMangementSystem.Models.InterviewScheduling", b =>
                 {
-                    b.Property<int>("DepartmentId")
+                    b.Property<int>("InterviewID")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("DepartmentId"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("InterviewID"));
 
-                    b.Property<string>("DepartmentName")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Location")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("ManagerId")
+                    b.Property<int>("ApplicationID")
                         .HasColumnType("int");
 
-                    b.HasKey("DepartmentId");
+                    b.Property<DateTime>("InterviewDate")
+                        .HasColumnType("datetime2");
 
-                    b.HasIndex("ManagerId")
-                        .IsUnique();
+                    b.Property<string>("InterviewLocation")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
-                    b.ToTable("Departments");
+                    b.Property<string>("InterviewStatus")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
-                    b.HasData(
-                        new
-                        {
-                            DepartmentId = 1,
-                            DepartmentName = "Human Resources",
-                            Location = "Building A",
-                            ManagerId = 1
-                        },
-                        new
-                        {
-                            DepartmentId = 2,
-                            DepartmentName = "IT",
-                            Location = "Building B",
-                            ManagerId = 2
-                        },
-                        new
-                        {
-                            DepartmentId = 3,
-                            DepartmentName = "Marketing",
-                            Location = "Building C",
-                            ManagerId = 3
-                        },
-                        new
-                        {
-                            DepartmentId = 4,
-                            DepartmentName = "Sales",
-                            Location = "Building D",
-                            ManagerId = 4
-                        },
-                        new
-                        {
-                            DepartmentId = 5,
-                            DepartmentName = "Finance",
-                            Location = "Building E",
-                            ManagerId = 5
-                        });
+                    b.Property<string>("InterviewerName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("JobApplicationApplicationID")
+                        .HasColumnType("int");
+
+                    b.HasKey("InterviewID");
+
+                    b.HasIndex("JobApplicationApplicationID");
+
+                    b.ToTable("InterviewsScheduling");
+                });
+
+            modelBuilder.Entity("HrMangementSystem.Models.JobApplication", b =>
+                {
+                    b.Property<int>("ApplicationID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ApplicationID"));
+
+                    b.Property<string>("Address")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Age")
+                        .HasColumnType("int");
+
+                    b.Property<string>("ApplicantName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("ApplicationDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("ApplicationStatus")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Education")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Experience")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("GraduationYear")
+                        .HasColumnType("int");
+
+                    b.Property<string>("JobTitle")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Nationality")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Skills")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("ApplicationID");
+
+                    b.ToTable("JobApplications");
+                });
+
+            modelBuilder.Entity("HrMangementSystem.Models.JobOffer", b =>
+                {
+                    b.Property<int>("JobOfferID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("JobOfferID"));
+
+                    b.Property<string>("JobOfferDescription")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("ManagerID")
+                        .HasColumnType("int");
+
+                    b.HasKey("JobOfferID");
+
+                    b.HasIndex("ManagerID");
+
+                    b.ToTable("JobOffers");
+                });
+
+            modelBuilder.Entity("HrMangementSystem.Models.KeyResult", b =>
+                {
+                    b.Property<int>("KeyResultID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("KeyResultID"));
+
+                    b.Property<decimal>("AchievedValue")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<string>("KeyResultDescription")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("ObjectiveID")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<decimal>("TargetValue")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.HasKey("KeyResultID");
+
+                    b.HasIndex("ObjectiveID");
+
+                    b.ToTable("KeyResult");
+                });
+
+            modelBuilder.Entity("HrMangementSystem.Models.Leave", b =>
+                {
+                    b.Property<int>("LeaveID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("LeaveID"));
+
+                    b.Property<int>("EmployeeID")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("LeaveEndDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("LeaveStartDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("LeaveStatus")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("LeaveType")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("LeaveID");
+
+                    b.HasIndex("EmployeeID");
+
+                    b.ToTable("leaves");
                 });
 
             modelBuilder.Entity("HrMangementSystem.Models.Manager", b =>
@@ -388,6 +666,39 @@ namespace HrMangementSystem.Migrations
                     b.ToTable("PerformanceProgresses");
                 });
 
+            modelBuilder.Entity("HrMangementSystem.Models.PerformanceReview", b =>
+                {
+                    b.Property<int>("ReviewID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ReviewID"));
+
+                    b.Property<int>("EmployeeID")
+                        .HasColumnType("int");
+
+                    b.Property<decimal>("Rating")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<DateTime>("ReviewDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("ReviewDescription")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("ReviewerID")
+                        .HasColumnType("int");
+
+                    b.HasKey("ReviewID");
+
+                    b.HasIndex("EmployeeID");
+
+                    b.HasIndex("ReviewerID");
+
+                    b.ToTable("performanceReviews");
+                });
+
             modelBuilder.Entity("HrMangementSystem.Models.Staff", b =>
                 {
                     b.Property<int>("StaffId")
@@ -457,15 +768,26 @@ namespace HrMangementSystem.Migrations
                         });
                 });
 
-            modelBuilder.Entity("Employee", b =>
+            modelBuilder.Entity("HrManagementSystem.Models.Attendance", b =>
                 {
-                    b.HasOne("HrMangementSystem.Models.Department", "Department")
-                        .WithMany("Employees")
-                        .HasForeignKey("DepartmentId")
+                    b.HasOne("HrMangementSystem.Models.Employee", "Employee")
+                        .WithMany("Attendances")
+                        .HasForeignKey("EmployeeID")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Department");
+                    b.Navigation("Employee");
+                });
+
+            modelBuilder.Entity("HrMangementSystem.Models.Absence", b =>
+                {
+                    b.HasOne("HrMangementSystem.Models.Employee", "Employee")
+                        .WithMany()
+                        .HasForeignKey("EmployeeID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Employee");
                 });
 
             modelBuilder.Entity("HrMangementSystem.Models.Department", b =>
@@ -479,6 +801,72 @@ namespace HrMangementSystem.Migrations
                     b.Navigation("Manager");
                 });
 
+            modelBuilder.Entity("HrMangementSystem.Models.Document", b =>
+                {
+                    b.HasOne("HrMangementSystem.Models.JobApplication", "JobApplication")
+                        .WithMany()
+                        .HasForeignKey("JobApplicationApplicationID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("JobApplication");
+                });
+
+            modelBuilder.Entity("HrMangementSystem.Models.Employee", b =>
+                {
+                    b.HasOne("HrMangementSystem.Models.Department", "Department")
+                        .WithMany("Employees")
+                        .HasForeignKey("DepartmentId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Department");
+                });
+
+            modelBuilder.Entity("HrMangementSystem.Models.InterviewScheduling", b =>
+                {
+                    b.HasOne("HrMangementSystem.Models.JobApplication", "JobApplication")
+                        .WithMany()
+                        .HasForeignKey("JobApplicationApplicationID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("JobApplication");
+                });
+
+            modelBuilder.Entity("HrMangementSystem.Models.JobOffer", b =>
+                {
+                    b.HasOne("HrMangementSystem.Models.Manager", "Manager")
+                        .WithMany()
+                        .HasForeignKey("ManagerID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Manager");
+                });
+
+            modelBuilder.Entity("HrMangementSystem.Models.KeyResult", b =>
+                {
+                    b.HasOne("HrMangementSystem.Models.Objective", "Objective")
+                        .WithMany()
+                        .HasForeignKey("ObjectiveID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Objective");
+                });
+
+            modelBuilder.Entity("HrMangementSystem.Models.Leave", b =>
+                {
+                    b.HasOne("HrMangementSystem.Models.Employee", "Employee")
+                        .WithMany()
+                        .HasForeignKey("EmployeeID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Employee");
+                });
+
             modelBuilder.Entity("HrMangementSystem.Models.Objective", b =>
                 {
                     b.HasOne("HrMangementSystem.Models.Department", "Department")
@@ -487,7 +875,7 @@ namespace HrMangementSystem.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Employee", "Employee")
+                    b.HasOne("HrMangementSystem.Models.Employee", "Employee")
                         .WithMany()
                         .HasForeignKey("EmployeeID");
 
@@ -498,7 +886,7 @@ namespace HrMangementSystem.Migrations
 
             modelBuilder.Entity("HrMangementSystem.Models.PerformanceProgress", b =>
                 {
-                    b.HasOne("Employee", "Employee")
+                    b.HasOne("HrMangementSystem.Models.Employee", "Employee")
                         .WithMany("PerformanceProgresses")
                         .HasForeignKey("EmployeeID")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -515,9 +903,23 @@ namespace HrMangementSystem.Migrations
                     b.Navigation("Objective");
                 });
 
-            modelBuilder.Entity("Employee", b =>
+            modelBuilder.Entity("HrMangementSystem.Models.PerformanceReview", b =>
                 {
-                    b.Navigation("PerformanceProgresses");
+                    b.HasOne("HrMangementSystem.Models.Employee", "Employee")
+                        .WithMany("PerformanceReviews")
+                        .HasForeignKey("EmployeeID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("HrMangementSystem.Models.Manager", "Reviewer")
+                        .WithMany("PerformanceReviews")
+                        .HasForeignKey("ReviewerID")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Employee");
+
+                    b.Navigation("Reviewer");
                 });
 
             modelBuilder.Entity("HrMangementSystem.Models.Department", b =>
@@ -525,10 +927,21 @@ namespace HrMangementSystem.Migrations
                     b.Navigation("Employees");
                 });
 
+            modelBuilder.Entity("HrMangementSystem.Models.Employee", b =>
+                {
+                    b.Navigation("Attendances");
+
+                    b.Navigation("PerformanceProgresses");
+
+                    b.Navigation("PerformanceReviews");
+                });
+
             modelBuilder.Entity("HrMangementSystem.Models.Manager", b =>
                 {
                     b.Navigation("Department")
                         .IsRequired();
+
+                    b.Navigation("PerformanceReviews");
                 });
 
             modelBuilder.Entity("HrMangementSystem.Models.Objective", b =>

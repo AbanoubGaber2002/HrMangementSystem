@@ -9,6 +9,7 @@
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/employee.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/Attendance.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/Header.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/staff.css" asp-append-version="true" />
 
@@ -52,7 +53,7 @@
                             <a href="@Url.Action("Index", "Payroll")"><i class="fa-solid fa-receipt"></i> Payroll</a>
                         </li>
                         <li>
-                            <a href="@Url.Action("Index", "Timesheet")"><i class="fa-solid fa-clock"></i> Timesheet</a>
+                            <a asp-controller="attendance" asp-action="Index"><i class="fa-solid fa-clock"></i> Timesheet</a>
                         </li>
                         <li>
                             <a href="@Url.Action("Index", "Performance")"><i class="fa-solid fa-charts"></i> Performance</a>

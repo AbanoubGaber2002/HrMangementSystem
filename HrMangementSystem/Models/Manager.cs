@@ -14,6 +14,8 @@ namespace HrMangementSystem.Models
 
         // Foreign Key
         public int DepartmentID { get; set; }
-        public Department Department { get; set; }
+        public virtual Department Department { get; set; }
+
+        public ICollection<PerformanceReview> PerformanceReviews { get; set; }
     }
 }

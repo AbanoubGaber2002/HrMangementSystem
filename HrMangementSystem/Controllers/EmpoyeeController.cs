@@ -1,4 +1,5 @@
-﻿using HrMangementSystem.Models;
+﻿using HrManagementSystem.Models;
+using HrMangementSystem.Models;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;

@@ -55,7 +55,7 @@
     .table th,
     .table td {
         padding: 10px; /* Padding for cells */
-        text-align: left;
+        /*text-align: left;*/
         border-bottom: 1px solid #dee2e6; /* Divider for rows */
     }
 
@@ -90,7 +90,7 @@
 /* Input and Dropdown Styles */
 .dataTable-input {
     border: 1px solid #ced4da; /* Input border */
-    border-radius: 4px; /* Rounded corners */
+   /* border-radius: 4px; /* Rounded corners */
     padding: 5px; /* Padding for input */
     width: 200px; /* Fixed width for search input */
     margin: 19px;
