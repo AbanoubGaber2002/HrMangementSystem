@@ -1,0 +1,66 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - HrManagementSystem</title>
+
+    <link rel="stylesheet" type="text/css" href="~/css/employeeFileManagement.css" />
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/employee.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/Header.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/attendance.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/staff.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/Attendance.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/Dashboard.css" asp-append-version="true" />
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+</head>
+<body>
+    <!-- Header -->
+    @Html.Partial("_Header")
+
+    <!-- Sidebar Navigation -->
+    <header>
+        <nav class="dash-sidebar light-sidebar transparent-bg">
+            <div class="navbar-wrapper">
+                <div class="m-header main-logo">
+                    <a href="@Url.Action("Index", "Home")" class="b-brand">
+                        <img src="~/Images/logo.jpeg" alt="HRMGo" class="logo logo-lg" />
+                    </a>
+                </div>
+                <div class="navbar-content">
+                    <ul>
+                        @*<li>
+                            <a asp-controller="Dashboard" asp-action="Index"><i class="fa-solid fa-house"></i> Dashboard</a>
+                        </li>*@
+                        <li><a asp-controller="staff" asp-action="ManageUsers"><i class="fa-solid fa-user-group"></i> Staff</a></li>
+                        <li><a asp-controller="Employee" asp-action="Index"><i class="fa-solid fa-user"></i> Employee</a></li>
+                        <li>
+                            <a asp-controller="performance" asp-action="Index"><i class="fa-solid fa-chart-simple"></i> Performance</a>
+                        </li>
+                        <li>
+                            <a asp-controller="attendance" asp-action="Index"><i class="fa-solid fa-clock"></i> Attendance</a>
+                        </li>
+                        <li><a href="@Url.Action("ManageDocuments", "Document")"><i class="fa-solid fa-file-import"></i> Documents</a></li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Main Content -->
+    <div class="container">
+        <main role="main" class="pb-3">
+            @RenderBody() <!-- This will render content from views -->
+        </main>
+    </div>
+
+    <!-- Scripts -->
+    <script src="~/lib/jquery/dist/jquery.min.js" asp-append-version="true"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js" asp-append-version="true"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>
