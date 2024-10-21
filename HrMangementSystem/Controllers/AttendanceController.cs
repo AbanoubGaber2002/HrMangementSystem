@@ -43,60 +43,61 @@ namespace HrMangementSystem.Controllers
             return View(attendance);
         }
 
-
+        // POST: Attendance/Create
+        [HttpPost]
         /*[ValidateAntiForgeryToken]*/
-        [HttpPost]
-        [HttpPost]
         public async Task<IActionResult> Create(Attendance attendance)
+
+
         {
-            // Validate CheckOutTime
-            if (attendance.CheckOutTime != null && attendance.CheckOutTime <= attendance.CheckInTime)
-            {
-                ModelState.AddModelError("CheckOutTime", "Check-out time must be after check-in time.");
-            }
-
-            // Validate Date
-            if (attendance.Date.Date > DateTime.Today)
-            {
-                ModelState.AddModelError("Date", "Attendance date cannot be in the future.");
-            }
-
             if (!ModelState.IsValid)
             {
-                PrepareEmployeesList();
-                return View(attendance);
+                try
+                {
+                    // Validate check-in and check-out times
+                    if (attendance.CheckOutTime <= attendance.CheckInTime)
+                    {
+                        ModelState.AddModelError("CheckOutTime", "Check-out time must be after check-in time");
+                        PrepareEmployeesList();
+                        return View(attendance);
+                    }
+
+                    // Validate date is not in the future
+                    if (attendance.Date.Date > DateTime.Today)
+                    {
+                        ModelState.AddModelError("Date", "Attendance date cannot be in the future");
+                        PrepareEmployeesList();
+                        return View(attendance);
+                    }
+
+                    // Check for existing attendance
+                    var existingAttendance = await _context.Attendances
+                        .AsNoTracking()
+                        .FirstOrDefaultAsync(a => a.EmployeeId == attendance.EmployeeId
+                                             && a.Date.Date == attendance.Date.Date);
+
+                    if (existingAttendance != null)
+                    {
+                        ModelState.AddModelError(string.Empty, "Attendance record already exists for this employee on this date");
+                        PrepareEmployeesList();
+                        return View(attendance);
+                    }
+
+                    _context.Add(attendance);
+                    await _context.SaveChangesAsync();
+                    TempData["SuccessMessage"] = "Attendance record created successfully.";
+                    return RedirectToAction(nameof(Index));
+                }
+                catch (Exception ex)
+                {
+                    // Log the exception here
+                    ModelState.AddModelError(string.Empty, "An error occurred while saving the attendance record." + ex.ToString());
+                }
             }
 
-            // Check for existing attendance
-            var existingAttendance = await _context.Attendances
-                .AsNoTracking()
-                .FirstOrDefaultAsync(a => a.EmployeeId == attendance.EmployeeId && a.Date.Date == attendance.Date.Date);
-
-            if (existingAttendance != null)
-            {
-                ModelState.AddModelError(string.Empty, "Attendance record already exists for this employee on this date.");
-                PrepareEmployeesList();
-                return View(attendance);
-            }
-
-            try
-            {
-                _context.Add(attendance);
-                await _context.SaveChangesAsync();
-                TempData["SuccessMessage"] = "Attendance record created successfully.";
-                return RedirectToAction(nameof(Index));
-            }
-            catch (DbUpdateException ex)
-            {
-                ModelState.AddModelError(string.Empty, $"An error occurred while saving the attendance record: {ex.Message}");
-                PrepareEmployeesList();
-                return View(attendance);
-            }
+            PrepareEmployeesList();
+            return View(attendance);
         }
-
-
-
-
 
 
         // GET: Attendance/Edit/5
